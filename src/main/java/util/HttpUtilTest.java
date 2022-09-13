@@ -23,7 +23,16 @@ class HttpUtilTest {
     }
 
     @Test
-    void extractPath() {
+    void extractPath() throws IOException {
+        assertEquals(
+                httpUtil.extractPath("GET /index.html"),
+                "/index.html"
+        );
+
+        assertNotEquals(
+                httpUtil.extractPath("GET /index.html"),
+                "/hello.html"
+        );
     }
 
     @Test

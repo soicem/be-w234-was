@@ -23,7 +23,8 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpUtil httpUtil = new HttpUtil();
-            String path = httpUtil.extractPath(in);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            String path = httpUtil.extractPath(br.readLine());
             logger.info("target path: " + path);
 
             DataOutputStream dos = new DataOutputStream(out);

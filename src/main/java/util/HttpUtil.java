@@ -5,12 +5,8 @@ import java.nio.file.Files;
 
 public class HttpUtil {
 
-    public String extractPath(InputStream in) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-        String line = br.readLine();
-
+    public String extractPath(String line) throws IOException {
         if (line == null) return "";
-
         String[] tokens = line.split(" ");
         return tokens[1];
     }
