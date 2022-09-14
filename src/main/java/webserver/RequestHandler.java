@@ -1,8 +1,10 @@
 package webserver;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.file.Files;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,47 +23,14 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
-
-            byte[] body = new byte[8192];
-            String line = "";
-            int lineCount = 0;
-
-            logger.debug("--------Request Header--------");
-
-            while (true) {
-                line = br.readLine();
-                if (line == null || "".equals(line)) break;
-
-                logger.debug("Line: {}", line);
-
-                if (lineCount == 0) {
-                    String path = line.split(" ")[1];
-                    logger.debug("Path: {}", path);
-
-                    body = getBytesFromStaticFile(path);
-                }
-
-                lineCount++;
-            }
-
+            byte[] body = "Hello World".getBytes();
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-    }
-
-    private byte[] getBytesFromStaticFile(String path) throws IOException {
-        byte[] bytes = new byte[8192];
-        try {
-            bytes = Files.readAllBytes(new File("./webapp" + path).toPath());
-        } catch (Exception e) {
-            bytes = Files.readAllBytes(new File("./webapp" + "/error_not_found.html").toPath());
-        }
-
-        return bytes;
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
