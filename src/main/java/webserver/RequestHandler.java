@@ -3,9 +3,11 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequestUtils;
 import util.HttpUtil;
 
 public class RequestHandler implements Runnable {
@@ -23,9 +25,13 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpUtil httpUtil = new HttpUtil();
+            HttpRequestUtils httpRequestUtils = new HttpRequestUtils();
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             String path = httpUtil.extractPath(br.readLine());
             logger.info("target path: " + path);
+
+            Map<String, String> m = httpRequestUtils.parseQueryString(path);
+            logger.info(m.toString());
 
             DataOutputStream dos = new DataOutputStream(out);
 
