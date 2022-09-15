@@ -31,7 +31,7 @@ public class HttpRequestUtils {
             return Maps.newHashMap();
         }
 
-        String[] tokens = values.split(separator);
+        String[] tokens = values.split("\\?")[1].split(separator);
         return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
                 .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
     }
