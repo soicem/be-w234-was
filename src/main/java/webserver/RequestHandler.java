@@ -27,21 +27,17 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            HttpUtil httpUtil = new HttpUtil();
             HttpRequestUtils httpRequestUtils = new HttpRequestUtils();
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String path = httpUtil.extractPath(br.readLine());
+            String path = httpRequestUtils.extractPath(br.readLine());
             logger.info("target path: " + path);
 
             Map<String, String> m = httpRequestUtils.parseQueryString(path);
-            logger.info(m.toString());
-
             userRepository.add(new User(m.get("userId"), m.get("password"), m.get("name"), m.get("email")));
             logger.info(userRepository.findAll().toString());
 
             DataOutputStream dos = new DataOutputStream(out);
-
-            byte[] body = httpUtil.makeBody(path);
+            byte[] body = httpRequestUtils.makeBody(path);
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {

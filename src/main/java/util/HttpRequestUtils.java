@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
-public class HttpRequestUtils {
+public class HttpRequestUtils extends HttpUtil {
     /**
      * @param queryString은
      *            URL에서 ? 이후에 전달되는 field1=value1&field2=value2 형식임
@@ -31,7 +31,9 @@ public class HttpRequestUtils {
             return Maps.newHashMap();
         }
 
-        String[] tokens = values.split("\\?")[1].split(separator);
+        String[] tokens = values.split("\\?");
+        if(tokens.length > 1)  tokens = tokens[1].split(separator);
+
         return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
                 .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
     }
