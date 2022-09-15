@@ -9,6 +9,8 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import persistence.UserRepository;
+import service.HttpService;
+import service.HttpServiceImpl;
 import util.HttpRequestUtils;
 import util.HttpUtil;
 
@@ -27,17 +29,10 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            HttpRequestUtils httpRequestUtils = new HttpRequestUtils();
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String path = httpRequestUtils.extractPath(br.readLine());
-            logger.info("target path: " + path);
-
-            Map<String, String> m = httpRequestUtils.parseQueryString(path);
-            userRepository.add(new User(m.get("userId"), m.get("password"), m.get("name"), m.get("email")));
-            logger.info(userRepository.findAll().toString());
-
+            HttpService httpService = new HttpServiceImpl();
+            String path = httpService.analyze(in);
+            byte[] body = httpService.responseHTML(path);
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = httpRequestUtils.makeBody(path);
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
