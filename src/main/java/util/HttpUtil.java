@@ -12,10 +12,6 @@ public class HttpUtil {
     }
 
     public byte[] makeBody(String path) throws IOException {
-        byte[] body = "Hello World".getBytes();
-        if(path.equals("/index.html")) {
-            body = Files.readAllBytes(new File("./webapp"  + path).toPath());
-        }
-        return body;
+        return Files.readAllBytes(new File("./webapp" + path).toPath());
     }
 }
