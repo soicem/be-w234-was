@@ -16,6 +16,7 @@ import util.HttpUtil;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final HttpService httpService = new HttpServiceImpl();
 
     private Socket connection;
     // UserRepository userRepository = new UserRepository();
@@ -29,7 +30,6 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            HttpService httpService = new HttpServiceImpl();
             String path = httpService.analyze(in);
             byte[] body = httpService.responseHTML(path);
             DataOutputStream dos = new DataOutputStream(out);

@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class HttpServiceImpl implements HttpService {
 
-    static UserRepository userRepository = new UserRepository();
+    private static final UserRepository userRepository = new UserRepository();
 
     @Override
     public String analyze(InputStream in) {
