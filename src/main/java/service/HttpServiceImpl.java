@@ -10,13 +10,12 @@ import java.util.Map;
 public class HttpServiceImpl implements HttpService {
 
     private static final UserRepository userRepository = new UserRepository();
+    private static final HttpRequestUtils httpRequestUtils = new HttpRequestUtils();
 
     @Override
     public String analyze(InputStream in) {
         try {
-            HttpRequestUtils httpRequestUtils = new HttpRequestUtils();
             BufferedReader br = null;
-
             br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             String path = httpRequestUtils.extractPath(br.readLine());
 
