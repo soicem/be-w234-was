@@ -1,9 +1,10 @@
 package service;
 
 import java.io.InputStream;
+import java.util.Map;
 
 public interface HttpService {
-    String analyze(InputStream in);
+    Map<String, String> analyze(InputStream in);
 
     byte[] responseHTML(String path);
 }

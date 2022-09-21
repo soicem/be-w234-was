@@ -5,6 +5,7 @@ import persistence.UserRepository;
 import util.HttpRequestUtils;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.Map;
 
 public class HttpServiceImpl implements HttpService {
@@ -16,17 +17,21 @@ public class HttpServiceImpl implements HttpService {
     }
 
     @Override
-    public String analyze(InputStream in) {
+    public Map<String, String> analyze(InputStream in) {
         try {
             HttpRequestUtils httpRequestUtils = new HttpRequestUtils();
             BufferedReader br = null;
 
             br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+
             String path = httpRequestUtils.extractPath(br.readLine());
+            String host = br.readLine();
+            Map<String, String> ret = new HashMap<String, String>();
+            ret.put("path", path);
 
             Map<String, String> m = httpRequestUtils.parseQueryString(path);
             userRepository.add(new User(m.get("userId"), m.get("password"), m.get("name"), m.get("email")));
-            return path;
+            return ret;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

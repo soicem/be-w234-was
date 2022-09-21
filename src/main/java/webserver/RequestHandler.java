@@ -2,17 +2,13 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.util.Map;
 
-import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import persistence.UserRepository;
 import service.HttpService;
 import service.HttpServiceImpl;
-import util.HttpRequestUtils;
-import util.HttpUtil;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -30,20 +26,20 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpService httpService = new HttpServiceImpl();
-            String path = httpService.analyze(in);
-            byte[] body = httpService.responseHTML(path);
+            Map<String, String> m = httpService.analyze(in);
+            byte[] body = httpService.responseHTML(m.get("path"));
             DataOutputStream dos = new DataOutputStream(out);
-            response200Header(dos, body.length);
+            response200Header(dos, body.length, m.get("path").indexOf(".css") != -1 ? "text/css" : "text/html");
             responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
